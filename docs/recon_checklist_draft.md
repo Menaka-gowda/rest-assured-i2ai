@@ -1,0 +1,15 @@
+# Recon Checklist (Draft)
+
+> Draft by Justin, technical labels added by Kidus. Pending team review (JU-4 / KI-6).
+
+All checks run against MockBank on localhost only. Result format: [contract.md](contract.md).
+
+| Check | Lane | Local testing | Objective | Pass | Warn | Fail |
+|---|---|---|---|---|---|---|
+| Security Headers (added) | Recon (Kidus) | Testable | Check login/landing responses for key security headers (CSP, X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy) | Key headers present and sensible | Some present, some missing or weak | Most or all missing |
+| Metadata Disclosure | Recon (Kidus) | Testable | Identify exposed server banners, framework versions and public API routes | Server headers stripped/generic; no versions, debug endpoints or stack traces | Generic stack inferable from DOM, but exact versions and internal routes hidden | Explicit version banners or exposed /debug, /swagger or admin endpoints reachable |
+| Caching and CSRF | Recon (Kidus) | Testable (HTTPS part simulated on localhost) | Audit login form, submission target, anti-CSRF tokens and caching headers | HTTPS submit, unique per-session anti-CSRF token, masked password, Cache-Control: no-store | HTTPS and no-store enforced, but CSRF relies only on custom headers or autocomplete restrictions absent | No anti-CSRF validation, sensitive responses cacheable, or submit over plain HTTP |
+| Mixed Input Fields (username enumeration) | Recon (Kidus) | Testable once MockBank login exists; synthetic usernames only | Map login fields and compare responses for valid vs invalid synthetic usernames | Same status codes, generic error copy, uniform timing | Generic copy but measurable status or timing differences | Distinct messages like "User not found" vs "Incorrect password" |
+| Credential Harvesting | Recon (Kidus) | Testable on MockBank's own HTML/JS only; no OSINT on real organizations | Scan client-side HTML, JS bundles and source maps for hardcoded keys, test credentials or tokens | No secrets, tokens, test accounts or internal auth endpoints | Non-sensitive internal hostnames, staging URLs or verbose dev comments | Hardcoded API keys, tokens, default credentials, or exposed .env/source maps |
+| Credential Dumping (failed-login throttling) | Defense (Moustafa) | Testable against MockBank only, small bounded number of synthetic attempts | Check whether repeated failed logins from one origin get throttled | Rate limit, lockout or CAPTCHA after a low threshold (about 3 to 5) | Throttling only after a high volume (more than 10), no alerting | Unlimited failed attempts accepted |
+| Tor, VPN and high-risk OFAC origin | Recon (Kidus) | Simulated only (spoofed origin headers against MockBank); always reported as simulated | Check whether the portal challenges or blocks traffic from anomalous or high-risk origins | Blocks (403) or step-up challenge before serving login | Flags or logs origin without blocking or challenging | Serves login identically across all origins |

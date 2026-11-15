@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Secrets and local config (never commit)
+.env
+.env.*
+!.env.example
+secrets/
+*.secret
+*.pem
+*.key
+
+# Local outputs
+outputs/
+*.log
+
+# Team PDFs must never be committed
+*.pdf
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,122 @@
+{
+  "target": "http://127.0.0.1:8000",
+  "total_checks": 4,
+  "results": [
+    {
+      "check_name": "security_headers",
+      "target": "http://127.0.0.1:8000",
+      "status": "fail",
+      "severity": "medium",
+      "evidence": "Target is missing critical security headers: Content-Security-Policy, Strict-Transport-Security (HSTS), X-Content-Type-Options.",
+      "raw_output": {
+        "missing_headers": [
+          "Content-Security-Policy",
+          "Strict-Transport-Security (HSTS)",
+          "X-Content-Type-Options"
+        ],
+        "headers_received": [
+          "server",
+          "date",
+          "content-type",
+          "x-powered-by",
+          "x-frame-options",
+          "access-control-allow-origin"
+        ]
+      },
+      "timestamp": "2026-11-16T19:57:05Z"
+    },
+    {
+      "check_name": "metadata_disclosure",
+      "target": "http://127.0.0.1:8000",
+      "status": "fail",
+      "severity": "medium",
+      "evidence": "Server header exposes software banner: 'Apache/2.4.41 (Ubuntu)' X-Powered-By exposes backend runtime: 'PHP/8.0.12, Express/4.17.1' robots.txt disallows and enumerates internal paths: ['/admin/', '/treasury-api/', '/internal-docs/']",
+      "raw_output": {
+        "server": "Apache/2.4.41 (Ubuntu)",
+        "x_powered_by": "PHP/8.0.12, Express/4.17.1",
+        "disallowed_paths": [
+          "/admin/",
+          "/treasury-api/",
+          "/internal-docs/"
+        ]
+      },
+      "timestamp": "2026-11-16T19:57:05Z"
+    },
+    {
+      "check_name": "caching_and_csrf",
+      "target": "http://127.0.0.1:8000",
+      "status": "warn",
+      "severity": "medium",
+      "evidence": "Login form action submits over plain unencrypted HTTP. No anti-CSRF token verification field found in login form.",
+      "raw_output": {
+        "issues": [
+          "Login form action submits over plain unencrypted HTTP.",
+          "No anti-CSRF token verification field found in login form."
+        ]
+      },
+      "timestamp": "2026-11-16T19:57:05Z"
+    },
+    {
+      "check_name": "anomalous_origin",
+      "target": "http://127.0.0.1:8000",
+      "status": "simulated",
+      "severity": "low",
+      "evidence": "Simulated anomalous origin header triggered HTTP 403 Forbidden gateway block.",
+      "raw_output": {
+        "simulated_status_code": 403,
+        "simulation_type": "header_injection"
+      },
+      "timestamp": "2026-11-16T19:57:05Z"
+    }
+  ],
+  "trace": [
+    {
+      "step": 1,
+      "timestamp": "2026-11-16T19:57:05Z",
+      "thought": "Begin initial discovery by auditing perimeter defensive HTTP security headers.",
+      "action": "call_tool: security_headers",
+      "observation": {
+        "check_name": "security_headers",
+        "status": "fail",
+        "severity": "medium",
+        "evidence": "Target is missing critical security headers: Content-Security-Policy, Strict-Transport-Security (HSTS), X-Content-Type-Options."
+      }
+    },
+    {
+      "step": 2,
+      "timestamp": "2026-11-16T19:57:05Z",
+      "thought": "Perimeter headers inspected. Next inspect server runtime banners, robots.txt, and exposed service markers.",
+      "action": "call_tool: metadata_disclosure",
+      "observation": {
+        "check_name": "metadata_disclosure",
+        "status": "fail",
+        "severity": "medium",
+        "evidence": "Server header exposes software banner: 'Apache/2.4.41 (Ubuntu)' X-Powered-By exposes backend runtime: 'PHP/8.0.12, Express/4.17.1' robots.txt disallows and enumerates internal paths: ['/admin/', '/treasury-api/', '/internal-docs/']"
+      }
+    },
+    {
+      "step": 3,
+      "timestamp": "2026-11-16T19:57:05Z",
+      "thought": "Metadata analysis reveals web portal structure. Schedule form caching and CSRF verification on the login surface.",
+      "action": "call_tool: caching_and_csrf",
+      "observation": {
+        "check_name": "caching_and_csrf",
+        "status": "warn",
+        "severity": "medium",
+        "evidence": "Login form action submits over plain unencrypted HTTP. No anti-CSRF token verification field found in login form."
+      }
+    },
+    {
+      "step": 4,
+      "timestamp": "2026-11-16T19:57:05Z",
+      "thought": "Perform simulated anomalous origin gateway check using synthetic origin headers.",
+      "action": "call_tool: anomalous_origin",
+      "observation": {
+        "check_name": "anomalous_origin",
+        "status": "simulated",
+        "severity": "low",
+        "evidence": "Simulated anomalous origin header triggered HTTP 403 Forbidden gateway block."
+      }
+    }
+  ]
+}

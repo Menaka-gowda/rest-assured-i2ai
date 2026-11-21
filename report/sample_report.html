@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Reconnaissance & Security Assurance Report</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; margin: 0; line-height: 1.6; }
+        .container { max-width: 960px; margin: 0 auto; background: #1e293b; border-radius: 10px; padding: 36px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); }
+        h1 { color: #38bdf8; font-size: 24px; margin-top: 0; border-bottom: 2px solid #334155; padding-bottom: 12px; }
+        h2 { color: #93c5fd; font-size: 18px; margin-top: 28px; border-left: 4px solid #38bdf8; padding-left: 10px; }
+        .meta-box { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 14px 18px; font-size: 13px; color: #cbd5e1; margin-bottom: 24px; display: flex; justify-content: space-between; }
+        table { width: 100%; border-collapse: collapse; margin-top: 14px; background: #0f172a; border-radius: 6px; overflow: hidden; }
+        th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #334155; }
+        th { background: #1e293b; color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .analysis-box { background: #0f172a; border-left: 3px solid #38bdf8; padding: 14px 18px; border-radius: 4px; font-size: 13px; margin-top: 12px; }
+        .footer { margin-top: 32px; border-top: 1px solid #334155; padding-top: 14px; font-size: 11px; color: #64748b; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Executive Reconnaissance & Security Assurance Report</h1>
+        <div class="meta-box">
+            <div><strong>Target:</strong> http://127.0.0.1:8000</div>
+            <div><strong>Audit Timestamp:</strong> 2026-11-16 19:57:05Z</div>
+            <div><strong>Mode:</strong> Localhost Safe Audit</div>
+        </div>
+
+        <h2>Audit Findings Overview</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Check Name</th>
+                    <th>Status</th>
+                    <th>Severity</th>
+                    <th>Observed Technical Evidence</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+        <tr>
+            <td style="font-family: monospace; font-weight: bold;">security_headers</td>
+            <td><span style="background: #ef4444; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase; font-weight: bold;">fail</span></td>
+            <td style="font-weight: 600;">Medium</td>
+            <td style="font-size: 13px;">Target is missing critical security headers: Content-Security-Policy, Strict-Transport-Security (HSTS), X-Content-Type-Options.</td>
+            <td style="font-family: monospace; font-size: 11px; color: #64748b;">2026-11-16T19:57:05Z</td>
+        </tr>
+        
+        <tr>
+            <td style="font-family: monospace; font-weight: bold;">metadata_disclosure</td>
+            <td><span style="background: #ef4444; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase; font-weight: bold;">fail</span></td>
+            <td style="font-weight: 600;">Medium</td>
+            <td style="font-size: 13px;">Server header exposes software banner: 'Apache/2.4.41 (Ubuntu)' X-Powered-By exposes backend runtime: 'PHP/8.0.12, Express/4.17.1' robots.txt disallows and enumerates internal paths: ['/admin/', '/treasury-api/', '/internal-docs/']</td>
+            <td style="font-family: monospace; font-size: 11px; color: #64748b;">2026-11-16T19:57:05Z</td>
+        </tr>
+        
+        <tr>
+            <td style="font-family: monospace; font-weight: bold;">caching_and_csrf</td>
+            <td><span style="background: #f59e0b; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase; font-weight: bold;">warn</span></td>
+            <td style="font-weight: 600;">Medium</td>
+            <td style="font-size: 13px;">Login form action submits over plain unencrypted HTTP. No anti-CSRF token verification field found in login form.</td>
+            <td style="font-family: monospace; font-size: 11px; color: #64748b;">2026-11-16T19:57:05Z</td>
+        </tr>
+        
+        <tr>
+            <td style="font-family: monospace; font-weight: bold;">anomalous_origin</td>
+            <td><span style="background: #3b82f6; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase; font-weight: bold;">simulated</span></td>
+            <td style="font-weight: 600;">Low</td>
+            <td style="font-size: 13px;">Simulated anomalous origin header triggered HTTP 403 Forbidden gateway block.</td>
+            <td style="font-family: monospace; font-size: 11px; color: #64748b;">2026-11-16T19:57:05Z</td>
+        </tr>
+        
+            </tbody>
+        </table>
+
+        <h2>Observation vs. Inference Analysis (Assurance Protocol)</h2>
+        <div class="analysis-box">
+            <strong>Observation:</strong> HTTP response headers omit Content-Security-Policy and HSTS.<br/>
+            <strong>Inference:</strong> Increases vulnerability to protocol downgrades and unauthorized cross-origin script injection.
+        </div>
+        <div class="analysis-box">
+            <strong>Observation:</strong> Server header exposes Apache/2.4.41 and PHP/8.0.12 runtime versions.<br/>
+            <strong>Inference:</strong> Grants automated scanners precise software targeting coordinates against public vulnerability registries.
+        </div>
+        <div class="analysis-box">
+            <strong>Observation:</strong> AI conversational assistant at /api/chat exposed system instructions under override prompt.<br/>
+            <strong>Inference:</strong> Highlights a critical lack of application-layer prompt guardrails, risking administrative credential exposure.
+        </div>
+
+        <div class="footer">
+            Generated autonomously by AI Recon Aggregator Framework | 95-891 CMU Heinz College | Strictly Localhost Practice Target
+        </div>
+    </div>
+</body>
+</html>

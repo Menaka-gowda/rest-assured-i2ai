@@ -1,0 +1,71 @@
+{
+  "target": "http://127.0.0.1:8000",
+  "fixture_version": "1.0",
+  "description": "Ground truth specification of planted vulnerabilities and test conditions on MockBank localhost fixture.",
+  "expected_findings": [
+    {
+      "check_name": "security_headers",
+      "expected_status": "fail",
+      "expected_severity": "medium",
+      "observable_evidence": "Missing critical security headers: Content-Security-Policy (CSP), Strict-Transport-Security (HSTS), and X-Content-Type-Options.",
+      "raw_signals": {
+        "missing_headers": ["Content-Security-Policy", "Strict-Transport-Security", "X-Content-Type-Options"],
+        "present_headers": ["X-Frame-Options", "Access-Control-Allow-Origin"]
+      }
+    },
+    {
+      "check_name": "metadata_disclosure",
+      "expected_status": "fail",
+      "expected_severity": "medium",
+      "observable_evidence": "Server banner leaks 'Apache/2.4.41 (Ubuntu)' and X-Powered-By leaks 'PHP/8.0.12, Express/4.17.1'. Disallow paths exposed in /robots.txt.",
+      "raw_signals": {
+        "server_banner": "Apache/2.4.41 (Ubuntu)",
+        "x_powered_by": "PHP/8.0.12, Express/4.17.1",
+        "robots_disallow": ["/admin/", "/treasury-api/", "/internal-docs/"]
+      }
+    },
+    {
+      "check_name": "caching_and_csrf",
+      "expected_status": "warn",
+      "expected_severity": "medium",
+      "observable_evidence": "Login form action submits via plain HTTP without anti-CSRF token verification field.",
+      "raw_signals": {
+        "action": "/login",
+        "protocol": "http",
+        "csrf_token_present": false
+      }
+    },
+    {
+      "check_name": "credential_dumping_throttling",
+      "expected_status": "pass",
+      "expected_severity": "info",
+      "observable_evidence": "Defensive rate limiting triggers HTTP 429 Too Many Requests after 5 consecutive failed login attempts within 60 seconds.",
+      "raw_signals": {
+        "throttle_threshold": 5,
+        "lockout_status_code": 429,
+        "retry_after_seconds": 60
+      }
+    },
+    {
+      "check_name": "ai_assistant_prompt_leakage",
+      "expected_status": "fail",
+      "expected_severity": "high",
+      "observable_evidence": "Conversational endpoint /api/chat leaks internal system instructions and administrative key upon prompt override.",
+      "raw_signals": {
+        "endpoint": "/api/chat",
+        "leaked_key_sample": "TG-DEMO-2026-KEY",
+        "guardrail_status": "bypassed"
+      }
+    },
+    {
+      "check_name": "anomalous_origin_challenge",
+      "expected_status": "simulated",
+      "expected_severity": "low",
+      "observable_evidence": "Simulated origin check returns HTTP 403 when X-Forwarded-For or CF-IPCountry simulates high-risk OFAC source.",
+      "raw_signals": {
+        "simulation_method": "header_injection",
+        "flagged_header": "X-Forwarded-For: 198.51.100.99"
+      }
+    }
+  ]
+}
